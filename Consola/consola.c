@@ -91,8 +91,6 @@ Conector* leer_configuracion(char* directorio){
 	char* path = string_new();
 
     string_append(&path,directorio);
-    string_append(&path,"/Consola");
-
 
 	t_config* config_consola = config_create(path);
 

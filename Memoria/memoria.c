@@ -42,7 +42,7 @@ int main(int argc , char **argv)
     Configuracion* config = malloc (sizeof(Configuracion));
 
 	config = leer_configuracion(argv[1]);
-	printf("Mi archivo dice: PUERTO = %d .\n RETARDO_MEMORIA = %d . \n REEMPLAZO = %s . \n", config->puerto, config->retardo_memoria, config->reemplazo_cache);
+
 	socket_desc = socket(AF_INET, SOCK_STREAM, 0);
 	if(socket_desc == -1)
 	{
@@ -83,8 +83,6 @@ Configuracion* leer_configuracion(char* directorio){
 	char* path = string_new();
 
     string_append(&path,directorio);
-    string_append(&path,"/Memoria");
-
 
 	t_config* config_memoria = config_create(path);
 
