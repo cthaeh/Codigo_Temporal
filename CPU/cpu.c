@@ -17,7 +17,8 @@ int main(int argc , char **argv)
     char server_reply[2000] = "";
 
     char* ip = "127.0.0.1";
-    int port = 7070;
+    int port_kernel = 7070;
+    int port_memoria = 5003;
 
     //Creacion de Socket
     sock = socket(AF_INET , SOCK_STREAM , 0);
@@ -32,7 +33,7 @@ int main(int argc , char **argv)
 
     server.sin_addr.s_addr = inet_addr(ip);
     server.sin_family = AF_INET;
-    server.sin_port = htons(port);
+    server.sin_port = htons(port_memoria);
 
     //Conexion al Servidor
     if (connect(sock, (struct sockaddr *)&server , sizeof(server)) < 0)
