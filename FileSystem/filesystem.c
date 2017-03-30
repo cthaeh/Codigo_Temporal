@@ -1,8 +1,7 @@
-/*
- * filesystem.c
- *
- *  Created on: 30/3/2017
- *      Author: utnso
- */
+#include <stdio.h>
+#include <stdlib.h>
 
+int main(){
+	return EXIT_SUCCESS;
+}
 

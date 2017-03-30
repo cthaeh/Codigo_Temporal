@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <pthread.h>
+#include "configuracion.h"
 
 void *handler_conexion(void *);
 
@@ -22,7 +23,11 @@ int main(int argc, char **argv)
     	return EXIT_FAILURE;
     }
 
-	port = atoi(argv[1]);
+    char* path = argv[1];
+
+    Kernel* config = cargar_config(path);
+
+	port = config->puerto_programa;
 
 	// Creacion de socket
 	socket_desc = socket(AF_INET, SOCK_STREAM, 0);
@@ -37,7 +42,7 @@ int main(int argc, char **argv)
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_port = htons(port);
 
-	// Asigno la IP y puerto al socket
+	// Asigno la IP y pueto al socket
 	if(bind(socket_desc,(struct sockaddr *)&server, sizeof(server)) < 0)
 	{
 		perror("Error en el bind");
