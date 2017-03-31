@@ -6,68 +6,107 @@
 #include <unistd.h>
 #include <commons/config.h>
 #include <commons/string.h>
+#include <pthread.h>
 
 //Llamada para ejecutar: ./Cliente IP nroDePuerto ej: ./Cliente 127.0.0.1 7070
 
-int main(int argc , char **argv)
-{
-    int sock;
-    struct sockaddr_in server;
-    char message[1000] = "";
-    char server_reply[2000] = "";
+void* manejo_memoria();
+void* manejo_kernel();
 
-    char* ip = "127.0.0.1";
-    int port_kernel = 7070;
-    int port_memoria = 5003;
+int main(int argc , char **argv){
 
-    //Creacion de Socket
-    sock = socket(AF_INET , SOCK_STREAM , 0);
+	pthread_t thread_id_kernel;
+	pthread_t thread_id_memoria;
 
-    if (sock == -1)
-    {
-        printf("Error. No se pudo crear el socket de conexion");
-        return EXIT_FAILURE;
-    }
+	if(pthread_create( &thread_id_kernel, NULL,  manejo_kernel, NULL) < 0)
+	{
+		perror("Error al crear el Hilo");
+		return 1;
+	}
 
-    puts("Socket de conexion creado correctamente");
+	if(pthread_create( &thread_id_memoria, NULL, manejo_memoria, NULL) < 0)
+	{
+		perror("Error al crear el Hilo");
+		return 1;
+	}
 
-    server.sin_addr.s_addr = inet_addr(ip);
-    server.sin_family = AF_INET;
-    server.sin_port = htons(port_memoria);
+	while(1){}
 
-    //Conexion al Servidor
-    if (connect(sock, (struct sockaddr *)&server , sizeof(server)) < 0)
-    {
-        perror("Fallo el intento de conexion al servidor");
-        return EXIT_FAILURE;
-    }
-
-    puts("Conectado al servidor\n");
-
-    //Loop para seguir comunicado con el servidor
-    while(1)
-    {
-        printf("Ingrese su mensaje para enviar al servidor : ");
-        scanf("%s" , message);
-
-        if(send(sock , message , strlen(message) , 0) < 0)
-        {
-            puts("Fallo el envio al servidor");
-            return EXIT_FAILURE;
-        }
-
-        //Verifico si hubo respuesta del servidor
-        if(recv(sock, server_reply , 2000 , 0) < 0)
-        {
-            puts("Desconexion del cliente");
-            break;
-        }
-
-        puts("Respuesta del servidor :");
-        puts(server_reply);
-    }
-
-    close(sock);
     return EXIT_SUCCESS;
 }
 
+void* manejo_kernel(){
+	int sock;
+	struct sockaddr_in server;
+	char message[1000] = "";
+	char server_reply[2000] = "";
+
+	char* ip = "127.0.0.1";
+	int port_kernel = 5000;
+
+	//Creacion de Socket
+	sock = socket(AF_INET , SOCK_STREAM , 0);
+
+	if (sock == -1){
+		printf("Error. No se pudo crear el socket de conexion\n");
+	    return 0;
+	}
+
+	puts("Socket de conexion a Kernel creado correctamente\n");
+
+	server.sin_addr.s_addr = inet_addr(ip);
+	server.sin_family = AF_INET;
+	server.sin_port = htons(port_kernel);
+
+	//Conexion al Servidor
+	if (connect(sock, (struct sockaddr *)&server , sizeof(server)) < 0){
+		perror("Fallo el intento de conexion al servidor\n");
+	    return 0;
+	}
+
+	puts("Conectado al servidor\n");
+
+	//Loop para seguir comunicado con el servidor
+	while(1){}
+
+	close(sock);
+	return 0;
+}
+
+void* manejo_memoria(){
+	int sock;
+	struct sockaddr_in server;
+	char message[1000] = "";
+	char server_reply[2000] = "";
+
+	char* ip = "127.0.0.1";
+	int port_memoria = 5003;
+
+	//Creacion de Socket
+	sock = socket(AF_INET , SOCK_STREAM , 0);
+
+	if (sock == -1){
+		printf("Error. No se pudo crear el socket de conexion\n");
+		return 0;
+	}
+
+	puts("Socket de conexion a Memoria creado correctamente\n");
+
+	server.sin_addr.s_addr = inet_addr(ip);
+	server.sin_family = AF_INET;
+	server.sin_port = htons(port_memoria);
+
+	//Conexion al Servidor
+	if (connect(sock, (struct sockaddr *)&server , sizeof(server)) < 0)	    {
+		perror("Fallo el intento de conexion al servidor\n");
+		return 0;
+	}
+
+	puts("Conectado al servidor\n");
+
+	//Loop para seguir comunicado con el servidor
+	while(1){}
+
+	close(sock);
+	return 0;
+}
