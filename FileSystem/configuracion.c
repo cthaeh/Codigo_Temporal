@@ -20,6 +20,8 @@ FileSystem_Config* cargar_config(char* path){
 
 	imprimir_config(fs_config);
 
+	free(fs_config);
+
 	return fs_config;
 
 }
