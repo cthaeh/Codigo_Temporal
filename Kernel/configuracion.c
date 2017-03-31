@@ -61,6 +61,8 @@ Kernel* cargar_config(char* path){
 
 	imprimir_config(kernel);
 
+	free(kernel);
+
 	return kernel;
 }
 
