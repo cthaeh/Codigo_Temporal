@@ -19,7 +19,8 @@ typedef struct {
 } Configuracion;
 
 Configuracion* leer_configuracion(char* directorio);
-
+void* handler_conexion(void *socket_desc);
+int sumarizador_conecciones;
 //Llamada para ejecutar: ./Cliente IP nroDePuerto ej: ./Cliente 127.0.0.1 7070
 
 int main(int argc , char **argv)
@@ -30,8 +31,8 @@ int main(int argc , char **argv)
     char server_reply[2000] = "";
 
     int socket_desc, client_sock, c;
-
     struct sockaddr client;
+    sumarizador_conecciones = 0;
 
     if (argc <= 1)
     {
@@ -66,7 +67,13 @@ int main(int argc , char **argv)
 	listen(socket_desc, 3);
 
 	while((client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c))){
-
+		pthread_t thread_id;
+		puts("Aqui llego");
+		if(pthread_create( &thread_id, NULL,  handler_conexion, (void*) &client_sock) < 0)
+		{
+			perror("Error al crear el Hilo");
+			return 1;
+		}
 	}
 
 
@@ -75,6 +82,15 @@ int main(int argc , char **argv)
 		perror("Fallo en la conexion");
 		return 1;
 	}
+
+	return 0;
+}
+
+void* handler_conexion(void *socket_desc){
+	sumarizador_conecciones++;
+	printf("Tengo %d Conectados \n", sumarizador_conecciones);
+
+	while(1){}
 
 	return 0;
 }
